@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <title>机房搬迁规划台 · DC Move Planner</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">DC</div>
+          <div>
+            <h1>机房搬迁规划台</h1>
+            <p>供电配额 · 上架位置 · 链路带宽 · 库中副本，从真实执行点续跑</p>
+          </div>
+        </div>
+        <div class="top-actions">
+          <button id="load-midway" class="btn btn-ghost" type="button">载入中途断点</button>
+          <button id="reset-demo" class="btn btn-secondary" type="button">重置演练</button>
+          <button id="unplug-temp-power" class="btn btn-danger" type="button" aria-label="拔掉/拔除临时电源 TP-7">
+            <span aria-hidden="true">⚡</span> 拔掉临时电源 TP-7
+          </button>
+        </div>
+      </header>
+
+      <section id="status-banner" class="status-banner" aria-live="polite"></section>
+
+      <section class="kpi-grid" aria-label="搬迁概览">
+        <article class="kpi-card">
+          <span class="kpi-label">步骤进度</span>
+          <strong id="kpi-progress">0 / 0</strong>
+          <div class="progress-track"><div id="progress-bar" class="progress-bar"></div></div>
+        </article>
+        <article class="kpi-card">
+          <span class="kpi-label">当前执行点</span>
+          <strong id="kpi-next" class="kpi-next">—</strong>
+          <span class="kpi-hint">已确认动作不会回滚</span>
+        </article>
+        <article class="kpi-card">
+          <span class="kpi-label">资源冲突</span>
+          <strong id="kpi-conflicts">0</strong>
+          <span class="kpi-hint" id="kpi-conflict-hint">剩余排程可行</span>
+        </article>
+        <article class="kpi-card">
+          <span class="kpi-label">临时电源</span>
+          <strong id="kpi-feed">TP-7 在线 · +2.8 kW</strong>
+          <span class="kpi-hint">拔除后容量立即变化并重算</span>
+        </article>
+      </section>
+
+      <main class="layout-grid">
+        <aside class="left-column">
+          <section class="panel" aria-labelledby="capacity-title">
+            <div class="panel-header">
+              <div>
+                <h2 id="capacity-title">容量与配额</h2>
+                <p>修改数值后立即从当前执行点重新求解</p>
+              </div>
+            </div>
+            <div id="capacity-form" class="capacity-groups"></div>
+          </section>
+
+          <section class="panel" aria-labelledby="rack-title">
+            <div class="panel-header">
+              <div>
+                <h2 id="rack-title">上架位置 / U 位账本</h2>
+                <p>实线为已确认位置，虚线为求解器建议位置</p>
+              </div>
+            </div>
+            <div id="rack-map" class="rack-map"></div>
+          </section>
+        </aside>
+
+        <section class="center-column">
+          <section class="panel plan-panel" aria-labelledby="plan-title">
+            <div class="panel-header plan-header">
+              <div>
+                <h2 id="plan-title">剩余搬迁排程</h2>
+                <p>逐条确认步骤；每次确认都会写入真实资源账本</p>
+              </div>
+              <button id="confirm-next" class="btn btn-primary" type="button">确认并执行下一条</button>
+            </div>
+            <ol id="step-list" class="step-list"></ol>
+          </section>
+        </section>
+
+        <aside class="right-column">
+          <section class="panel conflict-panel" aria-labelledby="conflict-title">
+            <div class="panel-header">
+              <div>
+                <h2 id="conflict-title">冲突分析与资源组合</h2>
+                <p>不可行时列出无法同时满足的机器、链路和资源配额</p>
+              </div>
+            </div>
+            <div id="conflict-panel" class="conflict-list" aria-live="polite"></div>
+          </section>
+
+          <section class="panel usage-panel" aria-labelledby="usage-title">
+            <div class="panel-header">
+              <div>
+                <h2 id="usage-title">资源占用</h2>
+                <p>实际用量与最终排程峰值</p>
+              </div>
+            </div>
+            <div id="usage-panel" class="usage-list"></div>
+          </section>
+
+          <section class="panel event-panel" aria-labelledby="event-title">
+            <div class="panel-header">
+              <div>
+                <h2 id="event-title">执行事件账本</h2>
+                <p>只追加，不提供回滚</p>
+              </div>
+            </div>
+            <div id="event-log" class="event-log" aria-live="polite"></div>
+          </section>
+        </aside>
+      </main>
+
+      <div id="toast" class="toast" role="alert" hidden></div>
+    </div>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

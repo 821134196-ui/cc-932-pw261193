@@ -1,0 +1,16 @@
+{
+  "name": "dc-relocation-planning-console",
+  "version": "1.0.0",
+  "private": true,
+  "description": "机房搬迁规划台：供电、U 位、链路与数据库副本约束下的可续跑排程",
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "build": "node --check server.js && node --check public/engine.js && node --check public/app.js",
+    "test": "node --test test/*.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
